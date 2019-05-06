@@ -89,6 +89,7 @@ int main()
 
 		// get depth intrinsics
 		Matrix3f depthIntrinsics = sensor.GetDepthIntrinsics();
+		Matrix3f depthIntrinsicsInv = sensor.GetDepthIntrinsics().inverse();
 		float fovX = depthIntrinsics(0, 0);
 		float fovY = depthIntrinsics(1, 1);
 		float cX = depthIntrinsics(0, 2);
@@ -96,6 +97,7 @@ int main()
 
 		// compute inverse depth extrinsics
 		Matrix4f depthExtrinsicsInv = sensor.GetDepthExtrinsics().inverse();
+
 
 		Matrix4f trajectory = sensor.GetTrajectory();
 		Matrix4f trajectoryInv = sensor.GetTrajectory().inverse();
@@ -109,11 +111,28 @@ int main()
 		Vertex* vertices = new Vertex[sensor.GetDepthImageWidth() * sensor.GetDepthImageHeight()];
 
 
+		// START OWN CODE
+		for (int y = 0; y < sensor.GetDepthImageHeight(); y++) {
+			for (int x = 0; x < sensor.GetDepthImageWidth(); x++)
+			{
+				int idx = y * sensor.GetDepthImageWidth() + x;
+				float depth = depthMap[idx];
+				if (depth == MINF) {
+					vertices[idx].position = Vector4f(MINF, MINF, MINF, MINF);
+					vertices[idx].color = Vector4uc(0, 0, 0, 0);
+					continue;
+				}
 
-
-
-
-
+				Vector3f p_image = Vector3f(x, y, 1) * depth;
+				Vector3f p_camera = depthIntrinsicsInv * p_image;
+				Vector4f p_sensor = depthExtrinsicsInv * Vector4f(p_camera[0], p_camera[1], p_camera[2], 1.0f);
+				Vector4f p_world = trajectoryInv * p_sensor;
+			
+				vertices[idx].position = p_world;
+				vertices[idx].color = Vector4uc(colorMap[idx], colorMap[idx + 1], colorMap[idx + 2], colorMap[idx + 3]);
+			}
+		}
+		// END OWN CODE
 
 		// write mesh file
 		std::stringstream ss;
