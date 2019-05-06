@@ -29,6 +29,15 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 
 	// TODO: Get number of vertices
 	unsigned int nVertices = 0;
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			int idx = y * width + x;
+
+			if (vertices[idx].position.x() != MINF) {
+				nVertices++;
+			}
+		}
+	}
 
 	// TODO: Get number of faces
 	unsigned nFaces = 0;
@@ -43,17 +52,32 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	// write header
 	outFile << "COFF" << std::endl;
 	outFile << nVertices << " " << nFaces << " 0" << std::endl;
-
+	
 	// TODO: save vertices
+	outFile << "# list of vertices" << std::endl;
+	outFile << "# X Y Z R G B A" << std::endl;
 
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			int idx = y * width + x;
 
+			if (vertices[idx].position.x() == MINF) {
+				continue;
+			}
 
-
-
+			outFile << vertices[idx].position.x() << " "
+				<< vertices[idx].position.y() << " "
+				<< vertices[idx].position.z() << " "
+				<< (int)vertices[idx].color.x() << " "
+				<< (int)vertices[idx].color.y() << " "
+				<< (int)vertices[idx].color.z() << " "
+				<< (int)vertices[idx].color.w() << std::endl;
+		}
+	}
+	   
 	// TODO: save faces
-
-
-
+	outFile << "# list of faces" << std::endl;
+	outFile << "# nVerticesPerFace idx0 idx1 idx2" << std::endl;
 
 
 
@@ -66,7 +90,7 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 int main()
 {
 	std::string filenameIn = "./data/rgbd_dataset_freiburg1_xyz/";
-	std::string filenameBaseOut = "mesh_";
+	std::string filenameBaseOut = "./meshes/mesh_";
 
 	// load video
 	std::cout << "Initialize virtual sensor..." << std::endl;
@@ -97,8 +121,6 @@ int main()
 
 		// compute inverse depth extrinsics
 		Matrix4f depthExtrinsicsInv = sensor.GetDepthExtrinsics().inverse();
-
-
 		Matrix4f trajectory = sensor.GetTrajectory();
 		Matrix4f trajectoryInv = sensor.GetTrajectory().inverse();
 
@@ -127,9 +149,9 @@ int main()
 				Vector3f p_camera = depthIntrinsicsInv * p_image;
 				Vector4f p_sensor = depthExtrinsicsInv * Vector4f(p_camera[0], p_camera[1], p_camera[2], 1.0f);
 				Vector4f p_world = trajectoryInv * p_sensor;
-			
+
 				vertices[idx].position = p_world;
-				vertices[idx].color = Vector4uc(colorMap[idx], colorMap[idx + 1], colorMap[idx + 2], colorMap[idx + 3]);
+				vertices[idx].color = Vector4uc((unsigned char)colorMap[idx], (unsigned char)colorMap[idx + 1], (unsigned char)colorMap[idx + 2], (unsigned char)colorMap[idx + 3]);
 			}
 		}
 		// END OWN CODE
