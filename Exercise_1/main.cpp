@@ -29,21 +29,9 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 
 	// TODO: Get number of vertices
 	unsigned int nVertices = 0;
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			int idx = y * width + x;
-
-			if (vertices[idx].position.x() != MINF) {
-				nVertices++;
-			}
-		}
-	}
 
 	// TODO: Get number of faces
 	unsigned nFaces = 0;
-
-
-
 
 	// Write off file
 	std::ofstream outFile(filename);
@@ -51,12 +39,12 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 
 	// write header
 	outFile << "COFF" << std::endl;
-	outFile << nVertices << " " << nFaces << " 0" << std::endl;
 	
 	// TODO: save vertices
-	outFile << "# list of vertices" << std::endl;
-	outFile << "# X Y Z R G B A" << std::endl;
-
+	std::stringstream ss;
+	ss << "# list of vertices" << std::endl;
+	ss << "# X Y Z R G B A" << std::endl;
+	
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			int idx = y * width + x;
@@ -65,7 +53,8 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 				continue;
 			}
 
-			outFile << vertices[idx].position.x() << " "
+			nVertices++;
+			ss << vertices[idx].position.x() << " "
 				<< vertices[idx].position.y() << " "
 				<< vertices[idx].position.z() << " "
 				<< (int)vertices[idx].color.x() << " "
@@ -76,10 +65,42 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	}
 	   
 	// TODO: save faces
-	outFile << "# list of faces" << std::endl;
-	outFile << "# nVerticesPerFace idx0 idx1 idx2" << std::endl;
+	ss << "# list of faces" << std::endl;
+	ss << "# nVerticesPerFace idx0 idx1 idx2" << std::endl;
 
+	for (int y = 0; y < height - 1; y++) {
+		for (int x = 0; x < width - 1; x++) {
+			if (nFaces >= 50000) {
+				break;
+			}
 
+			int idx = y * width + x;
+			if (vertices[idx].position.x() == MINF ||
+				vertices[idx + 1].position.x() == MINF ||
+				vertices[idx + width].position.x() == MINF ||
+				vertices[idx + width + 1].position.x() == MINF) {
+				continue;
+			}
+
+			if ((vertices[idx + width].position - vertices[idx + 1].position).squaredNorm() > edgeThreshold) {
+				continue;
+			}
+
+			if ((vertices[idx].position - vertices[idx + width].position).squaredNorm() <= edgeThreshold &&
+				(vertices[idx + 1].position - vertices[idx].position).squaredNorm() <= edgeThreshold) {
+				ss << "3 " << idx << " " << idx + width << " " << idx + 1 << std::endl;
+				nFaces++;
+			}
+			if ((vertices[idx + width].position - vertices[idx + width + 1].position).squaredNorm() <= edgeThreshold &&
+				(vertices[idx + width + 1].position - vertices[idx + 1].position).squaredNorm() <= edgeThreshold) {
+				ss << "3 " << idx + width << " " << idx + width + 1 << " " << idx + 1 << std::endl;
+				nFaces++;
+			}
+		}
+	}
+	
+	outFile << nVertices << " " << nFaces << " 0" << std::endl;
+	outFile << ss.str() << std::endl;
 
 	// close file
 	outFile.close();
@@ -131,7 +152,6 @@ int main()
 		// vertices[idx].color = Vector4uc(0,0,0,0);
 		// otherwise apply back-projection and transform the vertex to world space, use the corresponding color from the colormap
 		Vertex* vertices = new Vertex[sensor.GetDepthImageWidth() * sensor.GetDepthImageHeight()];
-
 
 		// START OWN CODE
 		for (int y = 0; y < sensor.GetDepthImageHeight(); y++) {
