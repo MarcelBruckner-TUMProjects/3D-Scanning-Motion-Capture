@@ -1,5 +1,4 @@
 *.off
-meshes/*.off
 
 # my compiler creates these (Kevin)
 Eigen.h.gch
