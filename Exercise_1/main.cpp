@@ -47,20 +47,21 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			int idx = y * width + x;
-
-			if (vertices[idx].position.x() == MINF) {
-				continue;
+			Vector4f position = vertices[y * width + x].position;
+			if (position.x() == MINF) {
+				position = Vector4f(0, 0, 0, 0);
 			}
 
+			Vector4uc color = vertices[y * width + x].color;
+			ss << position.x() << " "
+				<< position.y() << " "
+				<< position.z() << " "
+				<< (int)color.x() << " "
+				<< (int)color.y() << " "
+				<< (int)color.z() << " "
+				<< (int)color.w() << std::endl;
+
 			nVertices++;
-			ss << vertices[idx].position.x() << " "
-				<< vertices[idx].position.y() << " "
-				<< vertices[idx].position.z() << " "
-				<< (int)vertices[idx].color.x() << " "
-				<< (int)vertices[idx].color.y() << " "
-				<< (int)vertices[idx].color.z() << " "
-				<< (int)vertices[idx].color.w() << std::endl;
 		}
 	}
 	   
@@ -70,29 +71,28 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 
 	for (int y = 0; y < height - 1; y++) {
 		for (int x = 0; x < width - 1; x++) {
-			if (nFaces >= 50000) {
-				break;
-			}
-
 			int idx = y * width + x;
-			if (vertices[idx].position.x() == MINF ||
-				vertices[idx + 1].position.x() == MINF ||
-				vertices[idx + width].position.x() == MINF ||
-				vertices[idx + width + 1].position.x() == MINF) {
+
+			Vector4f vIdx = vertices[idx].position;
+			Vector4f vIdx1 = vertices[idx + 1].position;
+			Vector4f vIdxW = vertices[idx + width].position;
+			Vector4f vIdxW1 = vertices[idx + width + 1].position;
+
+			if (vIdx.x() == MINF || vIdx1.x() == MINF || vIdxW.x() == MINF || vIdxW1.x() == MINF) {
 				continue;
 			}
 
-			if ((vertices[idx + width].position - vertices[idx + 1].position).squaredNorm() > edgeThreshold) {
+			if ((vIdxW - vIdx1).squaredNorm() > edgeThreshold) {
 				continue;
 			}
 
-			if ((vertices[idx].position - vertices[idx + width].position).squaredNorm() <= edgeThreshold &&
-				(vertices[idx + 1].position - vertices[idx].position).squaredNorm() <= edgeThreshold) {
+			if ((vIdx - vIdxW).squaredNorm() <= edgeThreshold &&
+				(vIdx1 - vIdx).squaredNorm() <= edgeThreshold) {
 				ss << "3 " << idx << " " << idx + width << " " << idx + 1 << std::endl;
 				nFaces++;
 			}
-			if ((vertices[idx + width].position - vertices[idx + width + 1].position).squaredNorm() <= edgeThreshold &&
-				(vertices[idx + width + 1].position - vertices[idx + 1].position).squaredNorm() <= edgeThreshold) {
+			if ((vIdxW - vIdxW1).squaredNorm() <= edgeThreshold &&
+				(vIdxW1 - vIdx1).squaredNorm() <= edgeThreshold) {
 				ss << "3 " << idx + width << " " << idx + width + 1 << " " << idx + 1 << std::endl;
 				nFaces++;
 			}
@@ -152,7 +152,7 @@ int main()
 		// vertices[idx].color = Vector4uc(0,0,0,0);
 		// otherwise apply back-projection and transform the vertex to world space, use the corresponding color from the colormap
 		Vertex* vertices = new Vertex[sensor.GetDepthImageWidth() * sensor.GetDepthImageHeight()];
-
+		
 		// START OWN CODE
 		for (int y = 0; y < sensor.GetDepthImageHeight(); y++) {
 			for (int x = 0; x < sensor.GetDepthImageWidth(); x++)
@@ -171,7 +171,9 @@ int main()
 				Vector4f p_world = trajectoryInv * p_sensor;
 
 				vertices[idx].position = p_world;
-				vertices[idx].color = Vector4uc((unsigned char)colorMap[idx], (unsigned char)colorMap[idx + 1], (unsigned char)colorMap[idx + 2], (unsigned char)colorMap[idx + 3]);
+
+				int cIdx = 4 * idx;
+				vertices[idx].color = Vector4uc((unsigned char)colorMap[cIdx], (unsigned char)colorMap[cIdx + 1], (unsigned char)colorMap[cIdx + 2], (unsigned char)colorMap[cIdx + 3]);
 			}
 		}
 		// END OWN CODE
