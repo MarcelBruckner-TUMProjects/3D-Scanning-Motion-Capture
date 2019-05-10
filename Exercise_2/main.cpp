@@ -20,6 +20,8 @@ int main()
 
 	// fill volume with signed distance values
 	unsigned int mc_res = 50; // resolution of the grid, for debugging you can reduce the resolution (-> faster)
+	double mc_res_cube = mc_res * mc_res *mc_res;
+	double lastPrint = 0;
 	Volume vol(Vector3d(-0.1,-0.1,-0.1), Vector3d(1.1,1.1,1.1), mc_res, mc_res, mc_res, 1);
 	for (unsigned int x = 0; x < vol.getDimX(); x++)
 	{
@@ -27,10 +29,14 @@ int main()
 		{
 			for (unsigned int z = 0; z < vol.getDimZ(); z++)
 			{
-				std::cerr << "Eval: " << x << ", " << y << ", " << z << std::endl;
+				double currentPrint = (x * mc_res * mc_res + y * mc_res + z) / mc_res_cube;
+				if (currentPrint - lastPrint >= 0.01) {
+					std::cerr << "Fill volume with signed distance values: " << std::round(currentPrint * 100 + 0.5) << "%" << std::endl;
+					lastPrint = currentPrint;
+				}
 				Eigen::Vector3d p = vol.pos(x, y, z);
 				double val = surface->Eval(p);
-				vol.set(x,y,z, val);
+				vol.set(x, y, z, val);
 			}
 		}
 	}

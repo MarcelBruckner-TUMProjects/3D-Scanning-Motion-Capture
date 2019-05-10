@@ -187,13 +187,14 @@ private:
 		// note that all sample points (both on and off surface points) are stored in m_funcSamp
 		// you can access matrix elements using for example A(i,j) for the i-th row and j-th column
 		// similar you access the elements of the vector b, e.g. b(i) for the i-th element
-		for (int j = 0; j < A.cols() - 1; j++) {
-			for (int i = 0; i < A.rows(); i++) {
-					A(i, j) = phi(i,j);
-			}
-		}
-
 		for (int i = 0; i < A.rows(); i++) {
+			for (int j = 0; j < A.cols() - 4; j++) {
+				A(i, j) = phi(i, j);
+			}
+
+			A(i, A.cols() - 4) = m_funcSamp.m_pos[i].x();
+			A(i, A.cols() - 3) = m_funcSamp.m_pos[i].y();
+			A(i, A.cols() - 2) = m_funcSamp.m_pos[i].z();
 			A(i, A.cols() - 1) = 1;
 		}
 
@@ -202,9 +203,9 @@ private:
 		}
 
 		// build the system matrix and the right hand side of the normal equation
-		std::cerr << "ATA" << std::endl;
+		std::cerr << "Computing system matrix..." << std::endl;
 		m_systemMatrix = A.transpose() * A;
-		std::cerr << "ATb" << std::endl;
+		std::cerr << "Computing right hand side..." << std::endl;
 		m_rhs = A.transpose() * b;
 
 		// regularizer -> smoother surface
