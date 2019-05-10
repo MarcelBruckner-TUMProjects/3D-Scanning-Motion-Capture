@@ -165,10 +165,8 @@ int main()
 					continue;
 				}
 
-				Vector3f p_image = Vector3f(x, y, 1) * depth;
-				Vector3f p_camera = depthIntrinsicsInv * p_image;
-				Vector4f p_sensor = depthExtrinsicsInv * Vector4f(p_camera[0], p_camera[1], p_camera[2], 1.0f);
-				Vector4f p_world = trajectoryInv * p_sensor;
+				Vector3f p_camera = depthIntrinsicsInv * Vector3f(x, y, 1) * depth;			
+				Vector4f p_world = trajectoryInv * depthExtrinsicsInv * Vector4f(p_camera[0], p_camera[1], p_camera[2], 1.0f);
 
 				vertices[idx].position = p_world;
 
