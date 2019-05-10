@@ -152,6 +152,16 @@ public:
 		// hint: Eigen provides a norm() function to compute the l2-norm of a vector (e.g. see macro phi(i,j))
 		double result = 0.0;
 
+		for (int i = 0; i < m_coefficents.size() - 4 ; i++) {
+			result += m_coefficents[i] * EvalBasis((m_funcSamp.m_pos[i] - _x).norm());
+		}
+
+		Vector3d b = Vector3d(m_coefficents[m_coefficents.size() - 4],
+			m_coefficents[m_coefficents.size() - 3],
+			m_coefficents[m_coefficents.size() - 2]);
+		result += b.dot(_x);
+
+		result += m_coefficents[m_coefficents.size() - 1];
 
 		return result;
 	}
@@ -177,16 +187,24 @@ private:
 		// note that all sample points (both on and off surface points) are stored in m_funcSamp
 		// you can access matrix elements using for example A(i,j) for the i-th row and j-th column
 		// similar you access the elements of the vector b, e.g. b(i) for the i-th element
+		for (int j = 0; j < A.cols() - 1; j++) {
+			for (int i = 0; i < A.rows(); i++) {
+					A(i, j) = phi(i,j);
+			}
+		}
 
+		for (int i = 0; i < A.rows(); i++) {
+			A(i, A.cols() - 1) = 1;
+		}
 
-
-
-
-
-
+		for (int i = 0; i < b.rows(); i++) {
+			b(i) = m_funcSamp.m_val[i];
+		}
 
 		// build the system matrix and the right hand side of the normal equation
+		std::cerr << "ATA" << std::endl;
 		m_systemMatrix = A.transpose() * A;
+		std::cerr << "ATb" << std::endl;
 		m_rhs = A.transpose() * b;
 
 		// regularizer -> smoother surface
