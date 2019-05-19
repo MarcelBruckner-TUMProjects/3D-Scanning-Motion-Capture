@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gaussian", "Gaussian\Gaussian.vcxproj", "{356C26FE-7424-4520-9951-BB1B8AA3FD8E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Surface", "Surface\Surface.vcxproj", "{760557FC-6C90-4292-828F-97A0C9370AE8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dragon", "Dragon\Dragon.vcxproj", "{5DC35203-EE21-40F5-AD6B-2BA0444D17FF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{356C26FE-7424-4520-9951-BB1B8AA3FD8E}.Debug|x64.ActiveCfg = Debug|x64
+		{356C26FE-7424-4520-9951-BB1B8AA3FD8E}.Debug|x64.Build.0 = Debug|x64
+		{760557FC-6C90-4292-828F-97A0C9370AE8}.Debug|x64.ActiveCfg = Debug|x64
+		{760557FC-6C90-4292-828F-97A0C9370AE8}.Debug|x64.Build.0 = Debug|x64
+		{5DC35203-EE21-40F5-AD6B-2BA0444D17FF}.Debug|x64.ActiveCfg = Debug|x64
+		{5DC35203-EE21-40F5-AD6B-2BA0444D17FF}.Debug|x64.Build.0 = Debug|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4C3C1E77-55BB-4160-B9F0-DBD4FFE9B0D5}
+	EndGlobalSection
+EndGlobal
