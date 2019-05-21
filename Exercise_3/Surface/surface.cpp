@@ -8,7 +8,18 @@
 // TODO: Implement the cost function
 struct SurfaceCostFunction
 {
+	SurfaceCostFunction(const Point3D& point_) : point(point_) {}
 
+	template<typename T>
+	bool operator()(const T* const a, const T* const b, const T* const c, T* residual) const {
+		residual[0] = *c * T(point.z) - 
+			T(point.x * point.x) / *a +
+			T(point.y * point.y) / *b;
+		return true;
+	}
+
+private:
+	const Point3D point;
 };
 
 
@@ -18,11 +29,27 @@ int main(int argc, char** argv)
 
 	// TODO: Read 3D surface data points and define the parameters of the problem
 	const std::string file_path = "../data/points_surface.txt";
+	const auto points = read_points_from_file<Point3D>(file_path);
+
+	const double a_initial = -263.031;
+	const double b_initial = -385.778;
+	const double c_initial = -0.000638709;
+
+	double a = a_initial;
+	double b = b_initial;
+	double c = c_initial;
 
 	ceres::Problem problem;
 
 	// TODO: For each data point create one residual block
-
+	for (auto& point : points)
+	{
+		problem.AddResidualBlock(
+			new ceres::AutoDiffCostFunction<SurfaceCostFunction, 1, 1, 1, 1>(
+				new SurfaceCostFunction(point)),
+			nullptr, &a, &b, &c
+		);
+	}
 
 	ceres::Solver::Options options;
 	options.max_num_iterations = 100;
@@ -35,7 +62,8 @@ int main(int argc, char** argv)
 	std::cout << summary.BriefReport() << std::endl;
 	
 	// TODO: Output the final values of the parameters
-
+	std::cout << "Initial a: " << a_initial << ", Initial b: " << b_initial << ", Initial c: " << c_initial << std::endl;
+	std::cout << "Final a: " << a << ", Final b: " << b << ", Final c: " << c << std::endl;
 
 	return 0;
 }
