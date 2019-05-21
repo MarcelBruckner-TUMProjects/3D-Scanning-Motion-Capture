@@ -17,8 +17,8 @@ struct GaussianCostFunction
 	{
 		// TODO: Implement the cost function
 		residual[0] = T(point.y) -
-			T(1.0) / sqrt(T(2) * T(M_PI) * sigma[0] * sigma[0]) *
-			exp(-(((T(point.x) - mu[0]) * (T(point.x) - mu[0])) / (T(2) * sigma[0] * sigma[0])));
+			T(1.0 / sqrt(T(2 * M_PI) * sigma[0] * sigma[0])) *
+			T(exp(-(((T(point.x) - mu[0]) * (T(point.x) - mu[0])) / (T(2) * sigma[0] * sigma[0]))));
 
 		return true;
 	}
@@ -37,8 +37,8 @@ int main(int argc, char** argv)
 	const auto points = read_points_from_file<Point2D>(file_path);
 
 	// Good initial values make the optimization easier
-	const double mu_initial = 1.5;
-	const double sigma_initial = 0.6;
+	const double mu_initial = 1.0;
+	const double sigma_initial = 0.5;
 
 	double mu = mu_initial;
 	double sigma = sigma_initial;
@@ -66,6 +66,9 @@ int main(int argc, char** argv)
 	std::cout << summary.BriefReport() << std::endl;
 	std::cout << "Initial mu: " << mu_initial << "\tsigma: " << sigma_initial << std::endl;
 	std::cout << "Final mu: " << mu << "\tsigma: " << sigma << std::endl;
+
+	std::cout << std::endl;
+	std::cout << "python plot_gaussian.py --mu " << mu << " --sigma " << sigma << std::endl;
 	
 	return 0;
 }
