@@ -1,9 +1,0 @@
-iter      cost      cost_change  |gradient|   |step|    tr_ratio  tr_radius  ls_iter  iter_time  total_time
-   0  1.202639e-01    0.00e+00    2.87e+02   0.00e+00   0.00e+00  1.00e+04        0    1.19e-02    1.43e-02
-   1  8.479688e-04    1.19e-01    2.40e+01   1.17e+02   9.93e-01  3.00e+04        1    1.35e-02    2.85e-02
-   2  1.026595e-07    8.48e-04    2.43e-01   1.36e+01   1.00e+00  9.00e+04        1    1.14e-02    4.02e-02
-   3  9.506339e-15    1.03e-07    6.02e-05   1.60e-01   1.00e+00  2.70e+05        1    1.17e-02    5.24e-02
-   4  1.579455e-16    9.35e-15    1.06e-10   7.38e-05   1.00e+00  8.10e+05        1    1.41e-02    6.71e-02
-Ceres Solver Report: Iterations: 5, Initial cost: 1.202639e-01, Final cost: 1.579455e-16, Termination: CONVERGENCE
-Initial a: -200 b: -300 c: 0
-Final a: -276.807       b: -405.983     c: -0.000606921
