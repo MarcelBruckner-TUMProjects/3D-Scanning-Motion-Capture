@@ -1,7 +1,0 @@
-*.off
-
-# my compiler creates these (Kevin)
-Eigen.h.gch
-FreeImageHelper.h.gch
-VirtualSensor.h.gch
-a.out
