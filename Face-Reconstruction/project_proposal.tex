@@ -8,26 +8,23 @@
 
 
 \begin{center}{\Huge\textbf{Project Proposal}}\end{center}
-\begin{center}{\Large\textbf{Real-time face reconstruction}}\end{center}
+\begin{center}{\Large\textbf{Face reconstruction}}\end{center}
 
 \section{Abstract}
+The target of our project is to implement a functionality that fits RGB-D data to a human face model.\\
+The first step is to gather the RGB-D data using a Kinect camera. The built-in RGB cameras and depth sensors are optimally suited for this task.
+Following we backproject and preprocess the raw RGB-D data to produce a point cloud of vertices with assigned color and normal values. 
+Based on this point cloud we will use parameter estimation to find the optimal rotation and translation parameters to estimate the head pose. These parameters are used to fit a face model to the point cloud.
+To find a good fit for the face model we will search for characteristic points in the point cloud and use these as additional parameters to warp the face model.
+Finally we will create a realistic 3D face model of the scanned person.\\
+We will base our research on the works described in \cite{Bondi2015, Shin2017, Turban2015,Zhang2016,Zollhofer2014}.
 
-%
-Write a short abstract of your planned project.
-%
-Cite papers that you want to use as references (e.g. Adelson et al.~\cite{adelson1984pyramid}).
-%
-Include an overview figure that shows your planned processing pipeline.
-%
-
-%\begin{figure}[h]
-%	\centering
-%	\includegraphics[width=\linewidth]{overview}
-%	\caption{Method overview.}
-%	\label{fig:overview}
-%\end{figure}
-
-Maybe something like \cite{jaredsanson}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{Images/pipeline.png}
+	\caption{An exemplary processing pipeline. We start by gathering the RGB-D data from the Kinect. Following we preprocess the raw RGB-D data and estimate the head pose. Finally we will fit the face mode to the captured RGB-D data.}
+	\label{fig:overview}
+\end{figure}
 
 \section{Requirements}
 \begin{itemize}	
@@ -35,18 +32,22 @@ Maybe something like \cite{jaredsanson}
 \end{itemize}
 
 \section{Team}
-\begin{itemize}
-\item Marcel Bruckner
-\item Kevin Bein
-\item Jonas Schulz
-\item Chandramohan Sudar
-\end{itemize}
+Marcel Bruckner, Kevin Bein, Jonas Schulz, Chandramohan Sudar
 
+\section{Weekly milestones}
+\begin{enumerate}
+	\item Gathering of the RGB-D data from the Kinect sensor
+	\item Backprojection of depth and RGB data to world space and generation of the point cloud
+	\item Filtering and enhancing of the produced point cloud and background segmentation
+	\item Find characteristic points in the point cloud to fit the face model
+	\item Fitting of the face model
+	\item Generation of a high resolution 3D face reconstruction
+\end{enumerate}
 
 % references
 {\small
 	\bibliographystyle{plain}
-	\bibliography{project_proposal}
+	\bibliography{Literature/3D-Scanning}
 }
 
 \end{document}
