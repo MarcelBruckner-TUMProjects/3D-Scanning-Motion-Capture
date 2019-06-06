@@ -1,33 +1,39 @@
+% pdflatex project_proposal.tex && bibtex project_proposal.aux && pdflatex project_proposal.tex && open project_proposal.pdf
 \documentclass[a4paper,pagesize 10pt]{scrartcl}
 
 \usepackage{graphicx}
-\usepackage{scalefnt}
-\usepackage{textfit}
+%\usepackage{scalefnt}
+%\usepackage{textfit}
 
 \begin{document}
 
 
 \begin{center}{\Huge\textbf{Project Proposal}}\end{center}
-\begin{center}{\Large\textbf{Real-time face reconstruction}}\end{center}
+\begin{center}{\Large\textbf{Body Animation}}\end{center}
 
 \section{Abstract}
 
 %
-Write a short abstract of your planned project.
+%Write a short abstract of your planned project.
 %
-Cite papers that you want to use as references (e.g. Adelson et al.~\cite{adelson1984pyramid}).
+%Cite papers that you want to use as references (e.g. Adelson et al.~\cite{adelson1984pyramid}).
 %
-Include an overview figure that shows your planned processing pipeline.
+%Include an overview figure that shows your planned processing pipeline.
 %
 
+The goal of this project is to implement the famous german game "Torwandschie\ss en where the player has to kick a football through two circular openings on an erected goal with a limited amount of tries. 
+The team which has the most successful shots wins.
+We will realize this by using a kinect and its skeleton tracking SDK \cite{kinect_basic} to map a player and its movements to a virtual model \cite{source0}.
+The program will detect the motion of kicking, then calculate a force and apply it to a virtual ball which will then be shot at a virtual "Torwand". 
+The visualization and physics simulation will be realized in Unity \cite{unity}
+
+% TODO: add image
 %\begin{figure}[h]
 %	\centering
 %	\includegraphics[width=\linewidth]{overview}
 %	\caption{Method overview.}
 %	\label{fig:overview}
 %\end{figure}
-
-Maybe something like \cite{jaredsanson}
 
 \section{Requirements}
 \begin{itemize}	
