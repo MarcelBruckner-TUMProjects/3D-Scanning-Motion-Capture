@@ -1,0 +1,38 @@
+# Installation instruction for Linux
+Tested on Ubuntu 16.04, therefore might need some modifications for other versions.
+
+## Install Cmake
+sudo apt-get install cmake
+
+## Build FreeImage
+sudo apt-get install libfreeimage-dev
+
+## Build Flann
+git clone git://github.com/mariusmuja/flann.git
+mkdir flann/build
+cd flann/build
+cmake ..
+make -j4
+make install
+
+## Build Ceres
+### Install dependencies
+sudo apt-get install libgoogle-glog-dev
+sudo apt-get install libatlas-base-dev
+sudo apt-get install libeigen3-dev
+
+## Compile Ceres
+git clone https://ceres-solver.googlesource.com/ceres-solver
+mkdir ceres-solver/build
+cd ceres-solver/build
+cmake ..
+make -j3
+make install
+
+## Compile and run exercise_4
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j4
+./exercise_4
+
