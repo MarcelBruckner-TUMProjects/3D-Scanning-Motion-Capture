@@ -110,9 +110,23 @@ public:
 		// class.
 		// Important: Ceres automatically squares the cost function.
 
-		residuals[0] = T(0);
-		residuals[1] = T(0);
-		residuals[2] = T(0);
+		Matrix<T, 3, 1> source;
+		source << T(m_sourcePoint.x()), T(m_sourcePoint.y()), T(m_sourcePoint.z());
+		Matrix<T, 3, 1> target;
+		target << T(m_targetPoint.x()), T(m_targetPoint.y()), T(m_targetPoint.z());
+
+		Matrix<T, 3, 3> rotation;
+		rotation = AngleAxis<T>(pose[0], Matrix<T, 3, 1>::UnitX()) *
+			AngleAxis<T>(pose[1], Matrix<T, 3, 1>::UnitY()) *
+			AngleAxis<T>(pose[2], Matrix<T, 3, 1>::UnitZ());
+
+		Matrix<T,3, 1> translation = Matrix<T, 3, 1>(pose[3], pose[4], pose[5]);
+		
+		Matrix<T, 3, 1> distance = rotation * source + translation - target;
+
+		residuals[0] = distance[0];
+		residuals[1] = distance[1];
+		residuals[2] = distance[2];
 
 		return true;
 	}
@@ -147,7 +161,22 @@ public:
 		// class.
 		// Important: Ceres automatically squares the cost function.
 
-		residuals[0] = T(0);
+		Matrix<T, 3, 1> source;
+		source << T(m_sourcePoint.x()), T(m_sourcePoint.y()), T(m_sourcePoint.z());
+		Matrix<T, 3, 1> target;
+		target << T(m_targetPoint.x()), T(m_targetPoint.y()), T(m_targetPoint.z());
+		Matrix<T, 1, 3> normal;
+		normal << T(m_targetNormal.x()), T(m_targetNormal.y()), T(m_targetNormal.z());
+
+		Matrix<T, 3, 3> rotation;
+		rotation = AngleAxis<T>(pose[0], Matrix<T, 3, 1>::UnitX()) *
+			AngleAxis<T>(pose[1], Matrix<T, 3, 1>::UnitY()) *
+			AngleAxis<T>(pose[2], Matrix<T, 3, 1>::UnitZ());
+
+		Matrix<T, 3, 1> translation = Matrix<T, 3, 1>(pose[3], pose[4], pose[5]);
+		Matrix<T, 3, 1> distance = rotation * source + translation - target;
+
+		residuals[0] = T((normal * distance)[0]);
 		
 		return true;
 	}
@@ -283,7 +312,10 @@ private:
 
 				// TODO: Create a new point-to-point cost function and add it as constraint (i.e. residual block) 
 				// to the Ceres problem.
-
+				problem.AddResidualBlock(
+					PointToPointConstraint::create(sourcePoint, targetPoint, 1),
+					nullptr, poseIncrement.getData()
+				);				
 
 				if (m_bUsePointToPlaneConstraints) {
 					const auto& targetNormal = targetNormals[match.idx];
@@ -293,7 +325,10 @@ private:
 					 
 					// TODO: Create a new point-to-plane cost function and add it as constraint (i.e. residual block) 
 					// to the Ceres problem.
-
+					problem.AddResidualBlock(
+						PointToPlaneConstraint::create(sourcePoint, targetPoint, targetNormal, 1),
+						nullptr, poseIncrement.getData()
+					);
 				}
 			}
 		}

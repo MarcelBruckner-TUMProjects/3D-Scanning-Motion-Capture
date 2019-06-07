@@ -10,8 +10,8 @@
 
 #define USE_POINT_TO_PLANE	1
 
-#define RUN_PROCRUSTES		1
-#define RUN_SHAPE_ICP		0
+#define RUN_PROCRUSTES		0
+#define RUN_SHAPE_ICP		1
 #define RUN_SEQUENCE_ICP	0
 
 void debugCorrespondenceMatching() {
