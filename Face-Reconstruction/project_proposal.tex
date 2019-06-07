@@ -14,15 +14,16 @@
 The target of our project is to implement a functionality that fits RGB-D data to a human face model.\\
 The first step is to gather the RGB-D data using a Kinect camera. The built-in RGB cameras and depth sensors are optimally suited for this task.
 Following we backproject and preprocess the raw RGB-D data to produce a point cloud of vertices with assigned color and normal values. 
-Based on this point cloud we will use parameter estimation to find the optimal rotation and translation parameters to estimate the head pose. These parameters are used to fit a face model to the point cloud.
-To find a good fit for the face model we will search for characteristic points in the point cloud and use these as additional parameters to warp the face model.
+Based on this point cloud we will use parameter estimation to find the optimal rotation and translation parameters to estimate the head pose and the warp parameters. 
+To find a good fit for the face model we will search for characteristic features in the point cloud and use these as additional parameters to warp the face model.
 Finally we will create a realistic 3D face model of the scanned person.\\
 We will base our research on the works described in \cite{Bondi2015, Shin2017, Turban2015,Zhang2016,Zollhofer2014}.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\linewidth]{Images/pipeline.png}
-	\caption{An exemplary processing pipeline. We start by gathering the RGB-D data from the Kinect. Following we preprocess the raw RGB-D data and estimate the head pose. Finally we will fit the face mode to the captured RGB-D data.}
+	\caption{An exemplary processing pipeline. We start by gathering the RGB-D data from the Kinect. Following we preprocess the raw RGB-D data and estimate the head pose. Finally we will fit the face mode to the captured RGB-D data.
+	We omit the last step of Flip-Flop optimization and only warp the face model according to the detected face features.}
 	\label{fig:overview}
 \end{figure}
 
