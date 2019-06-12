@@ -124,6 +124,8 @@ public:
 		
 		Matrix<T, 3, 1> distance = rotation * source + translation - target;
 
+		//distance *= T(std::sqrt(m_weight)) * T(std::sqrt(LAMBDA));
+
 		residuals[0] = distance[0];
 		residuals[1] = distance[1];
 		residuals[2] = distance[2];
@@ -177,7 +179,8 @@ public:
 		Matrix<T, 3, 1> distance = rotation * source + translation - target;
 
 		residuals[0] = T((normal * distance)[0]);
-		
+		//residuals[0] *= T(std::sqrt(m_weight)) * T(std::sqrt(LAMBDA));
+
 		return true;
 	}
 
@@ -313,7 +316,7 @@ private:
 				// TODO: Create a new point-to-point cost function and add it as constraint (i.e. residual block) 
 				// to the Ceres problem.
 				problem.AddResidualBlock(
-					PointToPointConstraint::create(sourcePoint, targetPoint, 1),
+					PointToPointConstraint::create(sourcePoint, targetPoint, (sourcePoint - targetPoint).squaredNorm()),
 					nullptr, poseIncrement.getData()
 				);				
 
@@ -326,7 +329,7 @@ private:
 					// TODO: Create a new point-to-plane cost function and add it as constraint (i.e. residual block) 
 					// to the Ceres problem.
 					problem.AddResidualBlock(
-						PointToPlaneConstraint::create(sourcePoint, targetPoint, targetNormal, 1),
+						PointToPlaneConstraint::create(sourcePoint, targetPoint, targetNormal, (sourcePoint - targetPoint).squaredNorm()),
 						nullptr, poseIncrement.getData()
 					);
 				}
