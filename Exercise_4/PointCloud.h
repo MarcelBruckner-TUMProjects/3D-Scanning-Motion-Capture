@@ -81,8 +81,10 @@ public:
 				}
 
 				// TODO: Compute the normals using the cross product of approximate tangent vectors.
-
-				normalsTmp[idx] = Vector3f(1, 1, 1); // Needs to be replaced.
+				Vector3f horizontal = pointsTmp[idx + 1] - pointsTmp[idx - 1];
+				Vector3f vertical = pointsTmp[idx + width] - pointsTmp[idx - width];
+				
+				normalsTmp[idx] = horizontal.cross(vertical); // Needs to be replaced.
 				normalsTmp[idx].normalize();
 			}
 		}
